@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "632282316706",
+    "project_id": "warehouseconnect-9df42",
+    "storage_bucket": "warehouseconnect-9df42.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:632282316706:android:14af82ea65c65d3e9d7cfb",
+        "android_client_info": {
+          "package_name": "com.pattaweefarm.btm_warehouseconnect"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "632282316706-dopl864ejba2ne391ub9pa35ba4iolpo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFa1aMqwPT4tPUcf6xdMj-eOZSrq4I0HY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "632282316706-dopl864ejba2ne391ub9pa35ba4iolpo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

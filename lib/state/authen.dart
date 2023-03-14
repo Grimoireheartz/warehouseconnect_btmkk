@@ -1,7 +1,10 @@
-import 'dart:ffi';
+import 'dart:convert';
 
+import 'package:btm_warehouseconnect/model/user_model.dart';
 import 'package:btm_warehouseconnect/utility/myconstant.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthenPage extends StatefulWidget {
   const AuthenPage({super.key});
@@ -109,8 +112,9 @@ class _AuthenPageState extends State<AuthenPage> {
         ),
         onPressed: () {
           if (formKey.currentState!.validate()) {
-            // getUserLogin();
+            getUserLogin();
             // getUserloginwithfirebase();
+
           }
         },
         child: Column(
@@ -270,5 +274,57 @@ class _AuthenPageState extends State<AuthenPage> {
         ),
       ),
     );
+  }
+
+  Future getUserLogin() async {
+    String data_email = user_email.text.toLowerCase();
+    String data_password = user_pass.text;
+
+    String apiPath =
+        '${MyConstant.domain_warecondb}/select_authenuser.php?key_db=${MyConstant.key_db}&apikey=${MyConstant.apikey_db}&email=$data_email&password=$data_password';
+    print('email: $data_email pass: $data_password');
+
+    await Dio().get(apiPath).then((value) async {
+      if (value.toString() == 'error') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: GestureDetector(
+                onTap: () =>
+                    ScaffoldMessenger.of(context).hideCurrentSnackBar(),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Email/Password incorrect - ข้อมูลไม่ถูกต้อง'),
+                    Icon(
+                      Icons.close_rounded,
+                      color: Colors.white,
+                    )
+                  ],
+                )),
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.only(bottom: 40.0, left: 10, right: 10),
+          ),
+        );
+      } else {
+        for (var data in json.decode(value.data)) {
+          UserModel userModel = UserModel.fromMap(data);
+
+          SharedPreferences preferences = await SharedPreferences.getInstance();
+          preferences.setString('firstname', userModel.firstname);
+          preferences.setString('lastname', userModel.lastname);
+          preferences.setString('email', userModel.email);
+          preferences.setString('phonenumber', userModel.phone_number);
+          preferences.setString('companyname', userModel.companyname);
+          preferences.setString('userType', userModel.user_type);
+
+          if (userModel.user_type == 'customer') {
+            Navigator.pushNamedAndRemoveUntil(
+                context, MyConstant.routeCustomerHome, (route) => false);
+          } else if (userModel.user_type == 'internal') {
+            print('navigation: internal homepage');
+          }
+        }
+      }
+    });
   }
 }

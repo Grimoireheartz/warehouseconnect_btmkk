@@ -1,5 +1,7 @@
 import 'package:btm_warehouseconnect/utility/myconstant.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -15,9 +17,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final formKey = GlobalKey<FormState>();
 
   TextEditingController user_firstname = TextEditingController();
-  TextEditingController user_firstname_th = TextEditingController();
   TextEditingController user_lastname = TextEditingController();
-  TextEditingController user_lastname_th = TextEditingController();
   TextEditingController user_phonenum = TextEditingController();
   TextEditingController user_email = TextEditingController();
   TextEditingController user_password = TextEditingController();
@@ -103,7 +103,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               contentPadding:
                                   const EdgeInsets.symmetric(vertical: 10.0),
                               errorStyle: TextStyle(color: Colors.red),
-                              hintText: 'ชื่อจริง (ภาษาอังกฤษ)',
+                              hintText: 'ชื่อจริง - FirstName',
                               filled: true,
                               fillColor: Colors.white,
                               enabledBorder: OutlineInputBorder(
@@ -124,9 +124,6 @@ class _RegisterPageState extends State<RegisterPage> {
                               ),
                             ),
                           ),
-                        ),
-                        SizedBox(
-                          height: 10,
                         ),
                         SizedBox(
                           height: 10,
@@ -148,7 +145,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               contentPadding:
                                   const EdgeInsets.symmetric(vertical: 10.0),
                               errorStyle: TextStyle(color: Colors.red),
-                              hintText: 'นามสกุล (ภาษาอังกฤษ)',
+                              hintText: 'นามสกุล - LastName',
                               filled: true,
                               fillColor: Colors.white,
                               enabledBorder: OutlineInputBorder(
@@ -173,9 +170,6 @@ class _RegisterPageState extends State<RegisterPage> {
                         SizedBox(
                           height: 10,
                         ),
-                        SizedBox(
-                          height: 10,
-                        ),
                         Container(
                           width: screensize * 0.7,
                           constraints: BoxConstraints(maxWidth: 500),
@@ -185,7 +179,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 : user_companyname,
                             validator: (value) {
                               if (value!.isEmpty) {
-                                return '** โปรดกรอกรหัสพนักงาน';
+                                return '** โปรดกรอกชื่อบริษัท';
                               } else {
                                 return null;
                               }
@@ -194,7 +188,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               contentPadding:
                                   const EdgeInsets.symmetric(vertical: 10.0),
                               errorStyle: TextStyle(color: Colors.red),
-                              hintText: 'ชื่อบริษัท',
+                              hintText: 'ชื่อบริษัท - Company',
                               filled: true,
                               fillColor: Colors.white,
                               enabledBorder: OutlineInputBorder(
@@ -236,7 +230,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               contentPadding:
                                   const EdgeInsets.symmetric(vertical: 10.0),
                               errorStyle: TextStyle(color: Colors.red),
-                              hintText: 'เบอร์โทรติดต่อ',
+                              hintText: 'เบอร์โทรติดต่อ - Tell',
                               filled: true,
                               fillColor: Colors.white,
                               enabledBorder: OutlineInputBorder(
@@ -277,7 +271,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               contentPadding:
                                   const EdgeInsets.symmetric(vertical: 10.0),
                               errorStyle: TextStyle(color: Colors.red),
-                              hintText: 'อีเมลล์',
+                              hintText: 'อีเมลล์ - Email',
                               filled: true,
                               fillColor: Colors.white,
                               enabledBorder: OutlineInputBorder(
@@ -320,7 +314,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               contentPadding:
                                   const EdgeInsets.symmetric(vertical: 10.0),
                               errorStyle: TextStyle(color: Colors.red),
-                              hintText: 'รหัสผ่าน',
+                              hintText: 'รหัสผ่าน - Password',
                               filled: true,
                               fillColor: Colors.white,
                               enabledBorder: OutlineInputBorder(
@@ -364,7 +358,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               contentPadding:
                                   const EdgeInsets.symmetric(vertical: 10.0),
                               errorStyle: TextStyle(color: Colors.red),
-                              hintText: 'ยืนยันรหัสผ่าน',
+                              hintText: 'ยืนยันรหัสผ่าน - Confirm Pass.',
                               filled: true,
                               fillColor: Colors.white,
                               enabledBorder: OutlineInputBorder(
@@ -399,10 +393,39 @@ class _RegisterPageState extends State<RegisterPage> {
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(25))),
                             onPressed: () async {
-                              // await requestRegis(context);
+                              if (formKey.currentState!.validate()) {
+                                if (user_password.text ==
+                                    user_passwordagain.text) {
+                                  await requestRegis();
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: GestureDetector(
+                                          onTap: () =>
+                                              ScaffoldMessenger.of(context)
+                                                  .hideCurrentSnackBar(),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                  'Password Not Match - รหัสผ่านไม่ตรงกัน'),
+                                              Icon(
+                                                Icons.close_rounded,
+                                                color: Colors.white,
+                                              )
+                                            ],
+                                          )),
+                                      behavior: SnackBarBehavior.floating,
+                                      margin: EdgeInsets.only(
+                                          bottom: 40.0, left: 10, right: 10),
+                                    ),
+                                  );
+                                }
+                              }
                             },
                             child: Text(
-                              'ลงทะเบียน',
+                              'ลงทะเบียน - Register',
                               style: TextStyle(
                                   fontStyle: FontStyle.italic,
                                   fontWeight: FontWeight.bold,
@@ -423,5 +446,58 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
       ),
     );
+  }
+
+  Future<Null> requestRegis() async {
+    String data_fname = user_firstname.text;
+    String data_lname = user_lastname.text;
+    String data_email = user_email.text;
+    data_email = data_email.toLowerCase();
+    String data_phone = user_phonenum.text;
+    String data_password = user_password.text;
+    String data_company = user_companyname.text;
+    String data_usertype = 'customer';
+
+    String apiPath =
+        '${MyConstant.domain_warecondb}insert_userdata.php/?key_db=${MyConstant.key_db}&apikey=${MyConstant.apikey_db}&email=$data_email&firstname=$data_fname&lastname=$data_lname&companyname=$data_company&password=$data_password&phone_number=$data_phone&usertype=$data_usertype';
+    await Dio().get(apiPath).then((value) async {
+      print('from Server => $value');
+      if (value.toString() == 'successfully') {
+        SharedPreferences preferences = await SharedPreferences.getInstance();
+        preferences.setString('firstname', data_fname);
+        preferences.setString('lastname', data_lname);
+        preferences.setString('email', data_email);
+        preferences.setString('phonenumber', data_phone);
+        preferences.setString('companyname', data_company);
+        preferences.setString('userType', data_usertype);
+
+        print(
+            'fname: $data_fname lastname: $data_lname email: $data_email phone: $data_phone');
+
+        Navigator.pushNamedAndRemoveUntil(
+            context, MyConstant.routeCustomerHome, (route) => false);
+      } else if (value.toString() == 'HaveUser_exist') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: GestureDetector(
+                onTap: () =>
+                    ScaffoldMessenger.of(context).hideCurrentSnackBar(),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                        'This email already exists - พบอีเมลล์นี้ลงทะเบียนอยู่แล้ว'),
+                    Icon(
+                      Icons.close_rounded,
+                      color: Colors.white,
+                    )
+                  ],
+                )),
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.only(bottom: 40.0, left: 10, right: 10),
+          ),
+        );
+      }
+    });
   }
 }
