@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -17,14 +19,13 @@ class _QRscannerState extends State<QRscanner> {
   QRViewController? controller;
 
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    // if (Platform.isAndroid) {
-    //   controller!.pauseCamera();
-    // } else if (Platform.isIOS) {
-    //   controller!.resumeCamera();
-    // }
+  void reassemble() {
+    super.reassemble();
+    if (Platform.isAndroid) {
+      controller!.pauseCamera();
+    } else if (Platform.isIOS) {
+      controller!.resumeCamera();
+    }
   }
 
   @override
@@ -63,5 +64,20 @@ class _QRscannerState extends State<QRscanner> {
         result = scanData;
       });
     });
+  }
+
+  void _onPermissionSet(BuildContext context, QRViewController ctrl, bool p) {
+    log('${DateTime.now().toIso8601String()}_onPermissionSet $p');
+    if (!p) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('no Permission')),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    controller?.dispose();
+    super.dispose();
   }
 }
