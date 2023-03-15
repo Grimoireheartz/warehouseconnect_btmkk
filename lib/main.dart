@@ -14,6 +14,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:io' show Platform;
 
+// uploade string test
+
 String? initailRoute;
 final Map<String, WidgetBuilder> map = {
   MyConstant.routeAuthen: (BuildContext context) => AuthenPage(),
