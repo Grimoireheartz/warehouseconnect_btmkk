@@ -1,4 +1,5 @@
 import 'package:btm_warehouseconnect/body/layoutmap.dart';
+import 'package:btm_warehouseconnect/body/myfleet_customer.dart';
 import 'package:btm_warehouseconnect/utility/myconstant.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,7 +18,7 @@ class _CustomerHomeState extends State<CustomerHome> {
 
   List<Widget> widgets = [
     LayoutMap(),
-    LayoutMap(),
+    MyfleetCustomer(),
     LayoutMap(),
     LayoutMap(),
     LayoutMap(),
@@ -171,7 +172,9 @@ class _CustomerHomeState extends State<CustomerHome> {
           Container(
             width: 80,
             child: IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, MyConstant.routeQRscanner);
+                },
                 icon: Icon(
                   Icons.qr_code_scanner_rounded,
                   color: Color.fromARGB(255, 88, 87, 87),

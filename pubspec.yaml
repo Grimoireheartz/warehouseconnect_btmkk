@@ -42,6 +42,8 @@ dependencies:
   firebase_messaging: ^14.2.6
   google_maps_flutter: ^2.2.5
   geocoding: ^2.0.5
+  qr_code_scanner: ^1.0.1
+  custom_qr_generator: ^0.1.2
 
 dev_dependencies:
   flutter_test:

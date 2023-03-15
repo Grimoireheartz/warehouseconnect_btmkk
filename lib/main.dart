@@ -1,6 +1,8 @@
 import 'package:btm_warehouseconnect/state/authen.dart';
 import 'package:btm_warehouseconnect/state/customer_home.dart';
 import 'package:btm_warehouseconnect/state/internal_home.dart';
+import 'package:btm_warehouseconnect/state/qr_generator.dart';
+import 'package:btm_warehouseconnect/state/qr_scanner.dart';
 import 'package:btm_warehouseconnect/state/register.dart';
 import 'package:btm_warehouseconnect/state/user_setting.dart';
 import 'package:btm_warehouseconnect/utility/myconstant.dart';
@@ -19,6 +21,8 @@ final Map<String, WidgetBuilder> map = {
   MyConstant.routeRegister: (BuildContext context) => RegisterPage(),
   MyConstant.routeUserSetting: (BuildContext context) => UserSetting(),
   MyConstant.routeInternalHome: (BuildContext context) => InternalHome(),
+  MyConstant.routeQRscanner: (BuildContext context) => QRscanner(),
+  MyConstant.routeQRgenerator: (BuildContext context) => QRgenerator(),
 };
 
 Future<Null> main() async {

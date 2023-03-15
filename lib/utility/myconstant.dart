@@ -7,8 +7,11 @@ class MyConstant {
   static String routeRegiste = '/registerpage';
   static String routeUserSetting = '/usersetting';
   static String routeInternalHome = '/internalhome';
+  static String routeQRscanner = '/qrscanner';
+  static String routeQRgenerator = 'qrgenerator';
   static String applogo = 'assets/logo_app.png';
   static String appbg = 'assets/appbg.jpg';
+  static String tyro_topview = 'assets/tyro_topview.png';
   static String applogo_rmbg = 'assets/logo_app-rmbg.png';
   static String key_db = 'Te2537';
   static String apikey_db = '865fceeff57f78a01cb28fa901349d58';
