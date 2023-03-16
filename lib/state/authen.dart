@@ -322,6 +322,8 @@ class _AuthenPageState extends State<AuthenPage> {
                 context, MyConstant.routeCustomerHome, (route) => false);
           } else if (userModel.user_type == 'internal') {
             print('navigation: internal homepage');
+            Navigator.pushNamedAndRemoveUntil(
+                context, MyConstant.routeInternalHome, (route) => false);
           }
         }
       }

@@ -1,9 +1,11 @@
+import 'package:btm_warehouseconnect/state/add_truck_tosite.dart';
 import 'package:btm_warehouseconnect/state/authen.dart';
 import 'package:btm_warehouseconnect/state/customer_home.dart';
 import 'package:btm_warehouseconnect/state/internal_home.dart';
 import 'package:btm_warehouseconnect/state/qr_generator.dart';
 import 'package:btm_warehouseconnect/state/qr_scanner.dart';
 import 'package:btm_warehouseconnect/state/register.dart';
+import 'package:btm_warehouseconnect/state/user_management.dart';
 import 'package:btm_warehouseconnect/state/user_setting.dart';
 import 'package:btm_warehouseconnect/utility/myconstant.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -25,6 +27,8 @@ final Map<String, WidgetBuilder> map = {
   MyConstant.routeInternalHome: (BuildContext context) => InternalHome(),
   MyConstant.routeQRscanner: (BuildContext context) => QRscanner(),
   MyConstant.routeQRgenerator: (BuildContext context) => QRgenerator(),
+  MyConstant.routeUsermanagement: (BuildContext context) => UserManagement(),
+  MyConstant.routeAddTruckToSite: (BuildContext context) => AddTruckToSite(),
 };
 
 Future<Null> main() async {
@@ -75,6 +79,9 @@ Future<Null> main() async {
     runApp(MyApp());
   } else if (userType == 'customer') {
     initailRoute = MyConstant.routeCustomerHome;
+    runApp(MyApp());
+  } else if (userType == 'internal') {
+    initailRoute = MyConstant.routeInternalHome;
     runApp(MyApp());
   }
   print('Warehouse connnect route to ==> ${initailRoute}');

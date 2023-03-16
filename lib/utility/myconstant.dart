@@ -7,6 +7,8 @@ class MyConstant {
   static String routeRegiste = '/registerpage';
   static String routeUserSetting = '/usersetting';
   static String routeInternalHome = '/internalhome';
+  static String routeUsermanagement = '/usermanagement';
+  static String routeAddTruckToSite = '/addtrucktosite';
   static String routeQRscanner = '/qrscanner';
   static String routeQRgenerator = 'qrgenerator';
   static String applogo = 'assets/logo_app.png';

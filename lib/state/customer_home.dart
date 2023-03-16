@@ -1,5 +1,5 @@
 import 'package:btm_warehouseconnect/body/layoutmap.dart';
-import 'package:btm_warehouseconnect/body/myfleet_customer.dart';
+import 'package:btm_warehouseconnect/body/myfleet_internal.dart';
 import 'package:btm_warehouseconnect/utility/myconstant.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,7 +18,7 @@ class _CustomerHomeState extends State<CustomerHome> {
 
   List<Widget> widgets = [
     LayoutMap(),
-    MyfleetCustomer(),
+    MyfleetInternal(),
     LayoutMap(),
     LayoutMap(),
     LayoutMap(),
@@ -32,7 +32,7 @@ class _CustomerHomeState extends State<CustomerHome> {
     Icons.more_horiz_outlined
   ];
 
-  List<String> titles = ['Home', 'MySite', 'WorkOrder', 'Chat', 'Other'];
+  List<String> titles = ['Home', 'FindTruck', 'WorkOrder', 'Chat', 'Other'];
 
   List<String> titles_thai = [
     'หน้าหลัก',
