@@ -17,6 +17,7 @@ class _AddTruckToSiteState extends State<AddTruckToSite> {
   List<String> list = <String>['BT_Khonkaen', 'BT_Phatthanakan67', 'BT_Onnut'];
   String? dropdownValue;
   bool load = false;
+  bool haveChangeInput = false;
 
   int truckserialCount = 1;
 
@@ -175,6 +176,7 @@ class _AddTruckToSiteState extends State<AddTruckToSite> {
                               ),
                               onPressed: () async {
                                 String truckSerialSearch = '';
+                                truckData_toAdd.clear();
                                 int countdata = 0;
                                 for (var x = 1; x <= truckserialCount; x++) {
                                   if (truckdata_serial[x].text.length > 0) {
@@ -274,6 +276,7 @@ class _AddTruckToSiteState extends State<AddTruckToSite> {
                                     }
                                     setState(() {
                                       load = false;
+                                      haveChangeInput = false;
                                     });
                                   });
                                 }
@@ -294,7 +297,7 @@ class _AddTruckToSiteState extends State<AddTruckToSite> {
               ),
             ),
       bottomNavigationBar: BottomAppBar(
-        color: Color.fromARGB(255, 228, 225, 225),
+        color: Color.fromARGB(255, 255, 255, 255),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -304,14 +307,152 @@ class _AddTruckToSiteState extends State<AddTruckToSite> {
               child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
                     alignment: Alignment.center,
-                    backgroundColor: Color.fromARGB(255, 255, 255, 255),
+                    backgroundColor: Color.fromARGB(255, 158, 250, 193),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  onPressed: () {
-                    for (var truck in truckData_toAdd) {
-                      print(truck.serial_no);
+                  onPressed: () async {
+                    if (haveChangeInput == true) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: GestureDetector(
+                              onTap: () => ScaffoldMessenger.of(context)
+                                  .hideCurrentSnackBar(),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text('Please check info first.'),
+                                      Text('โปรดกดตรวจสอบข้อมูลก่อน')
+                                    ],
+                                  ),
+                                  Icon(
+                                    Icons.close_rounded,
+                                    color: Colors.white,
+                                  )
+                                ],
+                              )),
+                          behavior: SnackBarBehavior.floating,
+                          margin: EdgeInsets.only(
+                              bottom: 40.0, left: 10, right: 10),
+                        ),
+                      );
+                    } else {
+                      // print('Length => ${truckData_toAdd.length}');
+                      if (truckData_toAdd.length > 0) {
+                        String insertData_serial = '';
+                        String insertData_model = '';
+                        String insertData_site = dropdownValue!;
+                        for (var truck in truckData_toAdd) {
+                          // print(truck.serial_no);
+                          insertData_serial += truck.serial_no + ',';
+                          insertData_model += truck.item_no + ',';
+                        }
+                        print('Serial => $insertData_serial');
+
+                        String apiPath =
+                            '${MyConstant.domain_warecondb}/insert_truckinstock.php?key_db=${MyConstant.key_db}&apikey=${MyConstant.apikey_db}&serial=$insertData_serial&model=$insertData_model&site=$insertData_site';
+
+                        await Dio().get(apiPath).then((value) {
+                          print(value);
+                          if (value.toString() == 'successfully') {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: GestureDetector(
+                                    onTap: () => ScaffoldMessenger.of(context)
+                                        .hideCurrentSnackBar(),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text('Save truck successfully'),
+                                            Text(
+                                                'เพิ่มข้อมูลไปยังไซต์เรียบร้อย')
+                                          ],
+                                        ),
+                                        Icon(
+                                          Icons.close_rounded,
+                                          color: Colors.white,
+                                        )
+                                      ],
+                                    )),
+                                behavior: SnackBarBehavior.floating,
+                                margin: EdgeInsets.only(
+                                    bottom: 40.0, left: 10, right: 10),
+                              ),
+                            );
+                            Navigator.pop(context);
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: GestureDetector(
+                                    onTap: () => ScaffoldMessenger.of(context)
+                                        .hideCurrentSnackBar(),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text('Have truck existing'),
+                                            Text('พบรถยกอยู่แล้ว')
+                                          ],
+                                        ),
+                                        Icon(
+                                          Icons.close_rounded,
+                                          color: Colors.white,
+                                        )
+                                      ],
+                                    )),
+                                behavior: SnackBarBehavior.floating,
+                                margin: EdgeInsets.only(
+                                    bottom: 40.0, left: 10, right: 10),
+                              ),
+                            );
+                          }
+                        });
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: GestureDetector(
+                                onTap: () => ScaffoldMessenger.of(context)
+                                    .hideCurrentSnackBar(),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text('Not found truck to insert.'),
+                                        Text(
+                                            'ไม่พบข้อมูลที่ถูกต้องสำหรับบันทึกไปยังไซต์')
+                                      ],
+                                    ),
+                                    Icon(
+                                      Icons.close_rounded,
+                                      color: Colors.white,
+                                    )
+                                  ],
+                                )),
+                            behavior: SnackBarBehavior.floating,
+                            margin: EdgeInsets.only(
+                                bottom: 40.0, left: 10, right: 10),
+                          ),
+                        );
+                      }
                     }
                   },
                   icon: Icon(
@@ -366,6 +507,22 @@ class _AddTruckToSiteState extends State<AddTruckToSite> {
                     return null;
                   }
                 },
+                onChanged: (value) {
+                  setState(() {
+                    haveChangeInput = true;
+                    for (var x = 1; x <= truckserialCount; x++) {
+                      setState(() {
+                        truckicon_display[x] = Icon(
+                          Icons.info_outline,
+                          color: Colors.black,
+                        );
+
+                        truckbordercolors_display[x] =
+                            BorderSide(color: Colors.grey);
+                      });
+                    }
+                  });
+                },
                 decoration: InputDecoration(
                     contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
                     errorStyle: TextStyle(color: Colors.red),
@@ -391,7 +548,10 @@ class _AddTruckToSiteState extends State<AddTruckToSite> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Text('Model: ${truckGetData_model[x]}'),
+                        Text(
+                          'Model: ${truckGetData_model[x]}',
+                          style: TextStyle(fontStyle: FontStyle.italic),
+                        ),
                       ],
                     ),
                   )

@@ -33,6 +33,7 @@ class _AuthenPageState extends State<AuthenPage> {
           child: SingleChildScrollView(
             child: Container(
               height: screensizeHeight,
+              // height: screensizeHeight - 50,
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage(MyConstant.appbg),
@@ -53,40 +54,42 @@ class _AuthenPageState extends State<AuthenPage> {
                   ),
                   constraints: BoxConstraints(maxHeight: 650, maxWidth: 600),
                   width: screensize * 0.8,
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.only(top: 30),
-                        width: screensize * 0.4,
-                        constraints: BoxConstraints(maxWidth: 200),
-                        child: Image.asset(MyConstant.applogo_rmbg),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                          width: screensize * 0.6,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Warehouse connect By BTM',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontStyle: FontStyle.italic,
-                                  fontWeight: FontWeight.bold,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.only(top: 30),
+                          width: screensize * 0.4,
+                          constraints: BoxConstraints(maxWidth: 200),
+                          child: Image.asset(MyConstant.applogo_rmbg),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                            width: screensize * 0.6,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Warehouse connect By BTM',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontStyle: FontStyle.italic,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          )),
-                      inputUserName(screensize),
-                      inputPassWord(screensize),
-                      btnLogIn(screensize),
-                      btnRegistor(screensize),
-                      SizedBox(
-                        height: 10,
-                      ),
-                    ],
+                              ],
+                            )),
+                        inputUserName(screensize),
+                        inputPassWord(screensize),
+                        btnLogIn(screensize),
+                        btnRegistor(screensize),
+                        SizedBox(
+                          height: 10,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -114,7 +117,6 @@ class _AuthenPageState extends State<AuthenPage> {
           if (formKey.currentState!.validate()) {
             getUserLogin();
             // getUserloginwithfirebase();
-
           }
         },
         child: Column(
