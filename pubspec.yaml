@@ -44,6 +44,7 @@ dependencies:
   geocoding: ^2.0.5
   qr_code_scanner: ^1.0.1
   custom_qr_generator: ^0.1.2
+  model_viewer_plus: ^1.5.0
 
 dev_dependencies:
   flutter_test:

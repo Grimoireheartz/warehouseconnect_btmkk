@@ -5,6 +5,7 @@ import 'package:btm_warehouseconnect/state/internal_home.dart';
 import 'package:btm_warehouseconnect/state/qr_generator.dart';
 import 'package:btm_warehouseconnect/state/qr_scanner.dart';
 import 'package:btm_warehouseconnect/state/register.dart';
+import 'package:btm_warehouseconnect/state/truck_detail.dart';
 import 'package:btm_warehouseconnect/state/user_management.dart';
 import 'package:btm_warehouseconnect/state/user_setting.dart';
 import 'package:btm_warehouseconnect/utility/myconstant.dart';
