@@ -11,6 +11,7 @@ class TruckInStock {
   final String model_year;
   final String picture;
   final String qty;
+  final String parking_posi;
   TruckInStock({
     required this.serial,
     required this.model_item,
@@ -21,6 +22,7 @@ class TruckInStock {
     required this.model_year,
     required this.picture,
     required this.qty,
+    required this.parking_posi,
   });
 
   TruckInStock copyWith({
@@ -33,6 +35,7 @@ class TruckInStock {
     String? model_year,
     String? picture,
     String? qty,
+    String? parking_posi,
   }) {
     return TruckInStock(
       serial: serial ?? this.serial,
@@ -44,6 +47,7 @@ class TruckInStock {
       model_year: model_year ?? this.model_year,
       picture: picture ?? this.picture,
       qty: qty ?? this.qty,
+      parking_posi: parking_posi ?? this.parking_posi,
     );
   }
 
@@ -58,6 +62,7 @@ class TruckInStock {
       'model_year': model_year,
       'picture': picture,
       'qty': qty,
+      'parking_posi': parking_posi,
     };
   }
 
@@ -72,6 +77,7 @@ class TruckInStock {
       model_year: map['model_year'] as String,
       picture: map['picture'] as String,
       qty: map['qty'] as String,
+      parking_posi: map['parking_posi'] as String,
     );
   }
 
@@ -82,7 +88,7 @@ class TruckInStock {
 
   @override
   String toString() {
-    return 'TruckInStock(serial: $serial, model_item: $model_item, truck_status: $truck_status, site: $site, note_info: $note_info, price: $price, model_year: $model_year, picture: $picture, qty: $qty)';
+    return 'TruckInStock(serial: $serial, model_item: $model_item, truck_status: $truck_status, site: $site, note_info: $note_info, price: $price, model_year: $model_year, picture: $picture, qty: $qty, parking_posi: $parking_posi)';
   }
 
   @override
@@ -97,7 +103,8 @@ class TruckInStock {
         other.price == price &&
         other.model_year == model_year &&
         other.picture == picture &&
-        other.qty == qty;
+        other.qty == qty &&
+        other.parking_posi == parking_posi;
   }
 
   @override
@@ -110,6 +117,7 @@ class TruckInStock {
         price.hashCode ^
         model_year.hashCode ^
         picture.hashCode ^
-        qty.hashCode;
+        qty.hashCode ^
+        parking_posi.hashCode;
   }
 }

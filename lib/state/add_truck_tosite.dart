@@ -4,6 +4,7 @@ import 'package:btm_warehouseconnect/model/truckinfo_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
+import '../model/sitelist_model.dart';
 import '../utility/myconstant.dart';
 
 class AddTruckToSite extends StatefulWidget {
@@ -14,7 +15,7 @@ class AddTruckToSite extends StatefulWidget {
 }
 
 class _AddTruckToSiteState extends State<AddTruckToSite> {
-  List<String> list = <String>['BT_Khonkaen', 'BT_Phatthanakan67', 'BT_Onnut'];
+  List<String> list = [];
   String? dropdownValue;
   bool load = false;
   bool haveChangeInput = false;
@@ -42,11 +43,31 @@ class _AddTruckToSiteState extends State<AddTruckToSite> {
 
   @override
   void initState() {
-    setState(() {
-      dropdownValue = list.first;
-    });
+    getSiteList();
+    // setState(() {
+    //   dropdownValue = list.first;
+    // });
     // TODO: implement initState
     super.initState();
+  }
+
+  Future getSiteList() async {
+    String apiPath =
+        '${MyConstant.domain_warecondb}/select_sitelist.php?key_db=${MyConstant.key_db}&apikey=${MyConstant.apikey_db}';
+
+    await Dio().get(apiPath).then((value) {
+      print(value);
+      for (var datasite in jsonDecode(value.data)) {
+        SiteListModel siteListModel = SiteListModel.fromMap(datasite);
+        // print('print site ==>>> ${siteListModel.location_name}');
+        setState(() {
+          list.add(siteListModel.location_name);
+        });
+      }
+      setState(() {
+        dropdownValue = list.first;
+      });
+    });
   }
 
   @override

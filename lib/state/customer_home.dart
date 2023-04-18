@@ -1,3 +1,4 @@
+import 'package:btm_warehouseconnect/body/home_allproduct.dart';
 import 'package:btm_warehouseconnect/body/layoutmap.dart';
 import 'package:btm_warehouseconnect/body/myfleet_internal.dart';
 import 'package:btm_warehouseconnect/utility/myconstant.dart';
@@ -17,7 +18,7 @@ class _CustomerHomeState extends State<CustomerHome> {
   int indexPosition = 0;
 
   List<Widget> widgets = [
-    LayoutMap(),
+    HomeAllProduct(),
     MyfleetInternal(),
     LayoutMap(),
     LayoutMap(),

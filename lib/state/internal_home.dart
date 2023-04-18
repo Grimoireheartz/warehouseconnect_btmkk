@@ -1,4 +1,8 @@
+import 'package:btm_warehouseconnect/body/home_allproduct.dart';
+import 'package:btm_warehouseconnect/body/internal_inquiry.dart';
+import 'package:btm_warehouseconnect/body/internal_otherpage.dart';
 import 'package:flutter/material.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../body/layoutmap.dart';
@@ -18,28 +22,28 @@ class _InternalHomeState extends State<InternalHome> {
   int indexPosition = 0;
 
   List<Widget> widgets = [
-    LayoutMap(),
+    HomeAllProduct(),
     MyfleetInternal(),
     LayoutMap(),
-    LayoutMap(),
-    LayoutMap(),
+    InternalInquiry(),
+    InternalOther(),
   ];
 
   List<IconData> icons = [
     Icons.home_outlined,
-    Icons.location_on_outlined,
-    Icons.assignment_outlined,
-    Icons.chat,
+    Icons.warehouse_sharp,
+    LineIcons.alternateMapMarked,
+    Icons.question_answer_rounded,
     Icons.more_horiz_outlined
   ];
 
-  List<String> titles = ['Home', 'MySite', 'WorkOrder', 'Chat', 'Other'];
+  List<String> titles = ['Home', 'Stock', 'TruckMap', 'Inquiry', 'Other'];
 
   List<String> titles_thai = [
     'หน้าหลัก',
-    'ไซต์ฉัน',
-    'แจ้งซ่อม',
-    'สนทนา',
+    'รถในคลัง',
+    'แผนที่คลัง',
+    'ลูกค้าสอบถาม',
     'อื่นๆ'
   ];
 

@@ -1,9 +1,12 @@
+import 'package:btm_warehouseconnect/state/add_truck_catalog.dart';
 import 'package:btm_warehouseconnect/state/add_truck_tosite.dart';
 import 'package:btm_warehouseconnect/state/authen.dart';
 import 'package:btm_warehouseconnect/state/customer_home.dart';
 import 'package:btm_warehouseconnect/state/internal_home.dart';
+import 'package:btm_warehouseconnect/state/parkingsite_qr_generater.dart';
 import 'package:btm_warehouseconnect/state/qr_generator.dart';
 import 'package:btm_warehouseconnect/state/qr_scanner.dart';
+import 'package:btm_warehouseconnect/state/qr_scanner_parkingpoint.dart';
 import 'package:btm_warehouseconnect/state/register.dart';
 import 'package:btm_warehouseconnect/state/truck_detail.dart';
 import 'package:btm_warehouseconnect/state/user_management.dart';
@@ -16,6 +19,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:io' show Platform;
+import 'package:btm_warehouseconnect/state/campaignform.dart';
+import 'package:btm_warehouseconnect/state/campaignpage.dart';
 
 // uploade string test
 
@@ -27,9 +32,12 @@ final Map<String, WidgetBuilder> map = {
   MyConstant.routeUserSetting: (BuildContext context) => UserSetting(),
   MyConstant.routeInternalHome: (BuildContext context) => InternalHome(),
   MyConstant.routeQRscanner: (BuildContext context) => QRscanner(),
-  MyConstant.routeQRgenerator: (BuildContext context) => QRgenerator(),
   MyConstant.routeUsermanagement: (BuildContext context) => UserManagement(),
   MyConstant.routeAddTruckToSite: (BuildContext context) => AddTruckToSite(),
+  MyConstant.routeParkingQRGen: (BuildContext context) => ParkingQRGen(),
+  MyConstant.routeAddTruckCatalog: (BuildContext context) => AddTruckCatalog(),
+  MyConstant.routeCampainpage: (BuildContext context) => Campaignpage(),
+  MyConstant.routeCampainForm: (BuildContext context) => CampaignForm(),
 };
 
 Future<Null> main() async {

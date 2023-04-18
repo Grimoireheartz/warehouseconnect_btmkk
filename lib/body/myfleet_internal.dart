@@ -1,10 +1,13 @@
 import 'dart:convert';
 
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:btm_warehouseconnect/model/sitelist_model.dart';
 import 'package:btm_warehouseconnect/model/truckinstock_model.dart';
 import 'package:btm_warehouseconnect/state/truck_detail.dart';
 import 'package:btm_warehouseconnect/utility/myconstant.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class MyfleetInternal extends StatefulWidget {
   const MyfleetInternal({super.key});
@@ -14,48 +17,101 @@ class MyfleetInternal extends StatefulWidget {
 }
 
 class _MyfleetInternalState extends State<MyfleetInternal> {
-  List<String> list = <String>['BT_Khonkaen', 'BT_Phatthanakan67', 'BT_Onnut'];
+  List<String> list = [];
   String? dropdownValue;
   int countTruckOnsite = 0;
   List<TruckInStock> truckget_instock = [];
 
-  List<Image> imageTruckShow = [];
+  List<String> imageTruckShow = [];
+
+  bool load = false;
 
   @override
   void initState() {
-    setState(() {
-      dropdownValue = list.first;
-    });
+    getSiteList();
+    // setState(() {
+    //   dropdownValue = list.first;
+    // });
     // TODO: implement initState
     super.initState();
-    gettruckbysite();
+    // gettruckbysite();
+  }
+
+  Future getSiteList() async {
+    setState(() {
+      load = true;
+    });
+
+    String apiPath =
+        '${MyConstant.domain_warecondb}/select_sitelist.php?key_db=${MyConstant.key_db}&apikey=${MyConstant.apikey_db}';
+
+    await Dio().get(apiPath).then((value) {
+      print(value);
+      for (var datasite in jsonDecode(value.data)) {
+        SiteListModel siteListModel = SiteListModel.fromMap(datasite);
+        print('print site ==>>> ${siteListModel.location_name}');
+        setState(() {
+          list.add(siteListModel.location_name);
+        });
+      }
+      setState(() {
+        dropdownValue = list.first;
+      });
+      gettruckbysite();
+    }).then((value) {
+      load = false;
+    });
   }
 
   Future gettruckbysite() async {
-    truckget_instock.clear();
     int countGet = 0;
     String apiPath =
         '${MyConstant.domain_warecondb}/select_truckbysite.php?key_db=${MyConstant.key_db}&apikey=${MyConstant.apikey_db}&site=$dropdownValue';
     await Dio().get(apiPath).then((value) {
       print(value);
-      if (value.toString() != 'error') {
+      if (value.toString() != 'null') {
+        print('True condition $value');
+        truckget_instock.clear();
+        imageTruckShow.clear();
         for (var truck in jsonDecode(value.data)) {
           TruckInStock truckInStock = TruckInStock.fromMap(truck);
           print(truckInStock.serial);
           countGet++;
-          setState(() {
-            truckget_instock.add(truckInStock);
-            if (truckInStock.model_item.contains('RRE') == true) {
-              imageTruckShow.add(Image.asset(MyConstant.pic_rre));
-            } else if (truckInStock.model_item.contains('LWE') == true) {
-              imageTruckShow.add(Image.asset(MyConstant.pic_lwe));
-            } else {
-              imageTruckShow.add(Image.asset(MyConstant.pic_truckicon));
+
+          String cacheImg = MyConstant.pic_truckicon;
+          String imgGet = truckInStock.picture;
+
+          if (imgGet.length > 0) {
+            print('Image path => $imgGet');
+            var imgGet_arr = imgGet.split(',');
+            int count = 0;
+            for (var data in imgGet_arr) {
+              if (data.length > 0) {
+                print('Img file : $data');
+                if (count == 0) {
+                  setState(() {
+                    cacheImg = data;
+                  });
+                }
+
+                count++;
+              }
             }
+          }
+
+          setState(() {
+            countTruckOnsite = countGet;
+            truckget_instock.add(truckInStock);
+            imageTruckShow.add(cacheImg);
           });
         }
         setState(() {
           countTruckOnsite = countGet;
+        });
+      } else {
+        truckget_instock.clear();
+        setState(() {
+          countTruckOnsite = 0;
         });
       }
     });
@@ -65,15 +121,17 @@ class _MyfleetInternalState extends State<MyfleetInternal> {
   Widget build(BuildContext context) {
     double screensize = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: Container(
-        alignment: Alignment.center,
-        child: Column(
-          children: [
-            addTruckBtn(screensize, context),
-            instockTitle(screensize),
-            selectSite(screensize),
-            ..._truckonsite(screensize),
-          ],
+      body: SingleChildScrollView(
+        child: Container(
+          alignment: Alignment.center,
+          child: Column(
+            children: [
+              addTruckBtn(screensize, context),
+              instockTitle(screensize),
+              selectSite(screensize),
+              ..._truckonsite(screensize),
+            ],
+          ),
         ),
       ),
     );
@@ -100,6 +158,7 @@ class _MyfleetInternalState extends State<MyfleetInternal> {
           // This is called when the user selects an item.
           setState(() {
             dropdownValue = value!;
+            gettruckbysite();
           });
         },
         items: list
@@ -148,7 +207,10 @@ class _MyfleetInternalState extends State<MyfleetInternal> {
             color: Colors.black,
           ),
           onPressed: () {
-            Navigator.pushNamed(context, MyConstant.routeAddTruckToSite);
+            Navigator.pushNamed(context, MyConstant.routeAddTruckToSite)
+                .then((value) {
+              gettruckbysite();
+            });
           },
           label: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -169,62 +231,116 @@ class _MyfleetInternalState extends State<MyfleetInternal> {
 
   List<Widget> _truckonsite(screensize) {
     List<Widget> truckonsiteList = [];
-    for (int x = 0; x < countTruckOnsite; x++) {
-      truckonsiteList.add(
-        Container(
-          margin: EdgeInsets.symmetric(vertical: 3),
-          constraints: BoxConstraints(maxWidth: 800),
-          width: screensize * 0.9,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              alignment: Alignment.centerLeft,
-              backgroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      TruckDetail(truckInStock: truckget_instock[x]),
+    if (countTruckOnsite != 0) {
+      for (int x = 0; x < countTruckOnsite; x++) {
+        truckonsiteList.add(
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 3),
+            constraints: BoxConstraints(maxWidth: 800),
+            width: screensize * 0.9,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                alignment: Alignment.centerLeft,
+                backgroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
                 ),
-              );
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Row(
-                children: [
-                  Container(
-                    width: 40,
-                    child: imageTruckShow[x],
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        TruckDetail(truckInStock: truckget_instock[x]),
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Serial: ${truckget_instock[x].serial}',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      Text(
-                        'Model: ${trimModel(truckget_instock[x].model_item, x)}',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      Text(
-                        'Price: ',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                    ],
-                  ),
-                ],
+                ).then((value) {
+                  gettruckbysite();
+                });
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: Row(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(right: 10),
+                      width: 40,
+                      // child: imageTruckShow[x],
+                      child: imageTruckShow[x].contains('assets') == true
+                          ? Image.asset(imageTruckShow[x])
+                          : FadeInImage.memoryNetwork(
+                              placeholder: kTransparentImage,
+                              image:
+                                  '${MyConstant.domain_warecondb}showimgweb.php?url=${[
+                                x
+                              ]}',
+                            ),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        buildTitle('Serial'),
+                        Text(
+                          '${truckget_instock[x].serial}',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        buildTitle('Model'),
+                        SizedBox(
+                          width: 150,
+                          height: 15,
+                          child: AutoSizeText(
+                            '${trimModel(truckget_instock[x].model_item, x)}',
+                            style: TextStyle(color: Colors.black),
+                            minFontSize: 14,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        buildTitle('Price'),
+                        Text(
+                          '${truckget_instock[x].price}',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        buildTitle('Parking Position'),
+                        SizedBox(
+                          width: 80,
+                          height: 15,
+                          child: AutoSizeText(
+                            '${truckget_instock[x].parking_posi}',
+                            minFontSize: 14,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-      );
+        );
+      }
+    } else {
+      truckonsiteList.add(Container(
+        child: Text('Empty Data'),
+      ));
     }
+
     return truckonsiteList;
+  }
+
+  Text buildTitle(String title) {
+    return Text(
+      title,
+      style: TextStyle(fontSize: 10, color: Colors.black),
+    );
   }
 
   String trimModel(String model_get, int index) {
