@@ -45,6 +45,16 @@ dependencies:
   qr_code_scanner: ^1.0.1
   custom_qr_generator: ^0.1.2
   model_viewer_plus: ^1.5.0
+  image_picker: ^0.8.7
+  transparent_image: ^2.0.1
+  another_flushbar: ^1.12.29
+  label_marker: ^1.0.1
+  auto_size_text: ^3.0.0
+  syncfusion_flutter_pdfviewer: ^20.4.53
+  google_maps_flutter_web: ^0.4.0+7
+  line_icons: ^2.0.1
+  searchfield: ^0.7.4
+  
 
 dev_dependencies:
   flutter_test:
@@ -64,6 +74,11 @@ flutter_icons:
   android: true
   ios: true
   image_path: "assets/logo_app.png"
+  web:
+    generate: true
+    image_path: "assets/logo_app.png"
+    background_color: "#hexcode"
+    theme_color: "#hexcode"
 
 # The following section is specific to Flutter packages.
 flutter:
