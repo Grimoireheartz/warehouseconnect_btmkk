@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
@@ -7,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:image_picker/image_picker.dart';
 import '../utility/myconstant.dart';
+import 'package:intl/intl.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class CampaignDetail extends StatefulWidget {
@@ -33,7 +35,7 @@ class _CampaignDetailState extends State<CampaignDetail> {
   File? file;
   List<String> cacheImg = ['null', 'null', 'null', 'null'];
   List<Uint8List> webImageArr = [for (var x = 0; x <= 2; x++) Uint8List(8)];
-  bool load = false;
+  bool load = true;
 
   @override
   void initState() {
@@ -64,29 +66,39 @@ class _CampaignDetailState extends State<CampaignDetail> {
 
   Future GetCampaign() async {
     String apiPath =
-        '${MyConstant.domain_warecondb}/warehouseconnect_data2/select_campaignoutput.php';
+        '${MyConstant.domain_warecondb}/warehouseconnect_data2/select_campaignname.php?promoname=${campaign_name.text}';
 
-    String imgGet = CampaignDetail!.picture;
-    for (var x = 0; x < 4; x++) {
-      cacheImg[x] = 'null';
-    }
+    await Dio().get(apiPath).then((value) {
+      if (value.toString().length > 0) {
+        for (var data in jsonDecode(value.data)) {
+          CampaignModel Campaign = CampaignModel.fromMap(data);
 
-    if (imgGet.length > 0) {
-      print('Image path => $imgGet');
-      var imgGet_arr = imgGet.split(',');
-      int count = 0;
-      for (var data in imgGet_arr) {
-        if (data.length > 0) {
-          print('Img file : $data');
-          setState(() {
-            cacheImg[count] = data;
-          });
-          count++;
+          String imgGet = Campaign.picture;
+
+          for (var x = 0; x < 4; x++) {
+            cacheImg[x] = 'null';
+          }
+
+          if (imgGet.length > 0) {
+            print('Image path => $imgGet');
+            var imgGet_arr = imgGet.split(',');
+            int count = 0;
+            for (var data in imgGet_arr) {
+              if (data.length > 0) {
+                print('Img file : $data');
+                setState(() {
+                  cacheImg[count] = data;
+                });
+                count++;
+              }
+            }
+          }
         }
       }
-    }
-    setState(() {
-      load = false;
+    }).then((value) {
+      setState(() {
+        load = false;
+      });
     });
   }
 
@@ -333,7 +345,17 @@ class _CampaignDetailState extends State<CampaignDetail> {
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 TextButton(
-                                  onPressed: () async {},
+                                  onPressed: () async {
+                                    print('URL => ${cacheImg[index]}');
+                                    String apiPath =
+                                        '${MyConstant.domain_warecondb}/warehouseconnect_data2/delete_campaignpic.php?promoname=${campaign_name.text}&filename=${cacheImg[index]}';
+
+                                    await Dio().get(apiPath).then((value) {
+                                      print(value);
+                                      Navigator.pop(context);
+                                      GetCampaign();
+                                    });
+                                  },
                                   child: Text('Confirm'),
                                 ),
                               ],
@@ -657,6 +679,7 @@ class _CampaignDetailState extends State<CampaignDetail> {
       controller: campaign_startdate == null ? null : campaign_startdate,
       // initialValue: truckData_serial.text,
       decoration: InputDecoration(
+        suffixIcon: Icon(Icons.calendar_today_rounded),
         contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
         errorStyle: TextStyle(color: Colors.red),
         hintText: 'Promotion Start',
@@ -678,36 +701,64 @@ class _CampaignDetailState extends State<CampaignDetail> {
           color: Colors.black,
         ),
       ),
+      onTap: () async {
+        DateTime? pickeddate = await showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime(2000),
+            lastDate: DateTime(2101));
+
+        if (pickeddate != null) {
+          setState(() {
+            campaign_startdate.text =
+                DateFormat('dd/MM/yyyy').format(pickeddate);
+          });
+        }
+      },
     );
   }
 
   TextFormField editForm_endcampaign() {
     return TextFormField(
-      controller: campaign_enddate == null ? null : campaign_enddate,
-      // initialValue: truckData_serial.text,
-      decoration: InputDecoration(
-        contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
-        errorStyle: TextStyle(color: Colors.red),
-        hintText: 'Promotion End',
-        filled: true,
-        fillColor: Colors.white,
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: Color.fromARGB(255, 215, 214, 214)),
+        controller: campaign_enddate == null ? null : campaign_enddate,
+        // initialValue: truckData_serial.text,
+        decoration: InputDecoration(
+          suffixIcon: Icon(Icons.calendar_today_rounded),
+          contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
+          errorStyle: TextStyle(color: Colors.red),
+          hintText: 'Promotion End',
+          filled: true,
+          fillColor: Colors.white,
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Color.fromARGB(255, 215, 214, 214)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Colors.red, width: 2),
+          ),
+          prefixIcon: Icon(
+            Icons.info_outline,
+            color: Colors.black,
+          ),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: Colors.red, width: 2),
-        ),
-        prefixIcon: Icon(
-          Icons.info_outline,
-          color: Colors.black,
-        ),
-      ),
-    );
+        onTap: () async {
+          DateTime? pickeddate = await showDatePicker(
+              context: context,
+              initialDate: DateTime.now(),
+              firstDate: DateTime(2000),
+              lastDate: DateTime(2101));
+
+          if (pickeddate != null) {
+            setState(() {
+              campaign_enddate.text =
+                  DateFormat('dd/MM/yyyy').format(pickeddate);
+            });
+          }
+        });
   }
 
   TextFormField editForm_campaignpresentdate() {
@@ -814,7 +865,7 @@ class _CampaignDetailState extends State<CampaignDetail> {
         file = File(result!.path);
         img_files[index] = file;
       });
-      // uploadImg(index);
+      uploadImg(index);
     } catch (e) {}
   }
 
@@ -829,22 +880,23 @@ class _CampaignDetailState extends State<CampaignDetail> {
 
     print('file type : ${filetype}');
 
-    // String nameFile =
-    //     'truck${truckData_serial.text}_${index}_${dateNow}.${filetype}';
-    // paths = 'truck_instock_img/$nameFile';
+    String nameFile = 'campaignmarketing${ran}_${index}_${dateNow}.${filetype}';
+    paths += 'campaign_img/$nameFile';
 
-    // Map<String, dynamic> map = {};
-    // map['file'] = await MultipartFile.fromFile(img_files[index]!.path,
-    //     filename: nameFile);
+    Map<String, dynamic> map = {};
+    map['file'] = await MultipartFile.fromFile(img_files[index]!.path,
+        filename: nameFile);
 
-    // FormData data = FormData.fromMap(map);
+    FormData data = FormData.fromMap(map);
 
-    // String apiSaveReqPic =
-    //     '${MyConstant.domain_warecondb}/warehouseconnect_data2/update_campaigninfo.php?key_db=${MyConstant.key_db}&apikey=${MyConstant.apikey_db}&serial=${truckData_serial.text}&path=$paths';
+    String apiSaveReqPic =
+        '${MyConstant.domain_warecondb}/warehouseconnect_data2/update_campaignimg.php?promoname=${campaign_name.text}&path=$paths';
 
-    // await Dio().post(apiSaveReqPic, data: data).then((value) async {
-    //   print('Upload Statius ==> ${value}');
-    //   // gettruckdata_byserial();
-    // });
+    print('Upload picture to database success!');
+    await Dio().post(apiSaveReqPic, data: data).then((value) async {
+      print('Upload Statius ==> ${value}');
+
+      GetCampaign();
+    });
   }
 }
