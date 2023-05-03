@@ -44,7 +44,7 @@ class _CampaignpageState extends State<Campaignpage> {
         '${MyConstant.domain_warecondb}/warehouseconnect_data2/select_campaignoutput.php';
     print(apiPath);
     await Dio().get(apiPath).then((value) {
-      print(value);
+      print('return data form database===> $value');
       for (var campaign in jsonDecode(value.data)) {
         CampaignModel Campaign = CampaignModel.fromMap(campaign);
         print(Campaign.promo_name);
@@ -128,7 +128,9 @@ class _CampaignpageState extends State<Campaignpage> {
                   MaterialPageRoute(
                       builder: (context) =>
                           CampaignDetail(Campaign: history_campaign[x])),
-                );
+                ).then((value) {
+                  Campaignall();
+                });
               },
               child: Padding(
                 padding: const EdgeInsets.all(5.0),
@@ -149,7 +151,6 @@ class _CampaignpageState extends State<Campaignpage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Text(data),
                           Text(
                             'PromotionName: ${history_campaign[x].promo_name}',
                             style: TextStyle(color: Colors.black),

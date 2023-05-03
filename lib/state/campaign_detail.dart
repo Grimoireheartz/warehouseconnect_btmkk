@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:btm_warehouseconnect/body/layoutmap.dart';
 import 'package:btm_warehouseconnect/model/campaignmodel.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +12,8 @@ import 'package:image_picker/image_picker.dart';
 import '../utility/myconstant.dart';
 import 'package:intl/intl.dart';
 import 'package:transparent_image/transparent_image.dart';
+
+enum Menu { itemOne }
 
 class CampaignDetail extends StatefulWidget {
   final CampaignModel Campaign;
@@ -22,18 +26,65 @@ class CampaignDetail extends StatefulWidget {
 class _CampaignDetailState extends State<CampaignDetail> {
   CampaignModel? CampaignDetail;
   final formKey = GlobalKey<FormState>();
+  TextEditingController campaign_id = TextEditingController();
   TextEditingController campaign_name = TextEditingController();
   TextEditingController campaign_detail = TextEditingController();
   TextEditingController campaign_url = TextEditingController();
   TextEditingController campaign_startdate = TextEditingController();
   TextEditingController campaign_enddate = TextEditingController();
   TextEditingController campaign_presentdate = TextEditingController();
-
-  String? dropdownValue;
+  TextEditingController campaign_notifications = TextEditingController();
+  TextEditingController campaign_notificationstime = TextEditingController();
+  dynamic dropdownValue;
   List<File?> img_files = [];
   int showimgIndex = 0;
   File? file;
   List<String> cacheImg = ['null', 'null', 'null', 'null'];
+  List<String> weekly = [
+    '',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday'
+  ];
+  List<String> monthly = [
+    '',
+    "The date on 1",
+    "The date on 2",
+    "The date on 3",
+    "The date on 4",
+    "The date on 5",
+    "The date on 6",
+    "The date on 7",
+    "The date on 8",
+    "The date on 9",
+    "The date on 10",
+    "The date on 11",
+    "The date on 12",
+    "The date on 13",
+    "The date on 14",
+    "The date on 15",
+    "The date on 16",
+    "The date on 17",
+    "The date on 18",
+    "The date on 19",
+    "The date on 20",
+    "The date on 21",
+    "The date on 22",
+    "The date on 23",
+    "The date on 24",
+    "The date on 25",
+    "The date on 26",
+    "The date on 27",
+    "The date on 28",
+    "The date on 29",
+    "The date on 30",
+    "The date on 31"
+  ];
+  List<String> SelectedChoice = ["Weekly", "Monthly"];
   List<Uint8List> webImageArr = [for (var x = 0; x <= 2; x++) Uint8List(8)];
   bool load = true;
 
@@ -45,23 +96,28 @@ class _CampaignDetailState extends State<CampaignDetail> {
     // TODO: implement initState
     CampaignDetail = widget.Campaign;
     setState(() {
+      campaign_id.text = CampaignDetail!.id;
       campaign_name.text = CampaignDetail!.promo_name;
       campaign_detail.text = CampaignDetail!.promo_detial;
       campaign_url.text = CampaignDetail!.url;
       campaign_startdate.text = CampaignDetail!.stdate;
       campaign_enddate.text = CampaignDetail!.enddate;
       campaign_presentdate.text = CampaignDetail!.present_datecampaign;
+      campaign_notifications.text = CampaignDetail!.notifications;
+      campaign_notificationstime.text = CampaignDetail!.notifications_time;
     });
 
     GetCampaign();
-    // getSiteList();
-    // for (var imgData in MyConstant.imgDesc_NewTruck) {
-    //   setState(() {
 
-    //   });
-    // }
     print(CampaignDetail!.promo_name);
     super.initState();
+  }
+
+  void _showTimePicker() {
+    showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
   }
 
   Future GetCampaign() async {
@@ -111,6 +167,35 @@ class _CampaignDetailState extends State<CampaignDetail> {
           backgroundColor: Colors.white,
           foregroundColor: Colors.black,
           title: Text('CampaignEdit'),
+          actions: [
+            PopupMenuButton<Menu>(
+              icon: Icon(Icons.more_vert_outlined),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(8.0),
+                  bottomRight: Radius.circular(8.0),
+                  topLeft: Radius.circular(8.0),
+                  topRight: Radius.circular(8.0),
+                ),
+              ),
+              offset: Offset(0, 50),
+              onSelected: (Menu item) async {
+                if (item.name == 'itemOne') {
+                  print('Choose item => ${item.name} ');
+                  deleteCampaignDialog(context);
+                }
+              },
+              itemBuilder: (context) => <PopupMenuEntry<Menu>>[
+                const PopupMenuItem(
+                  child: Text(
+                    'Delete Campaign',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                  value: Menu.itemOne,
+                )
+              ],
+            )
+          ],
         ),
         body: load
             ? Center(
@@ -260,19 +345,28 @@ class _CampaignDetailState extends State<CampaignDetail> {
                             ),
                             Row(
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('Promotion Name:'),
-                                    SizedBox(
-                                      height: 55,
-                                      child: Text('Promotion Detail:'),
-                                    ),
-                                    Text('Link url: '),
-                                    Text('Promotion Start:'),
-                                    Text('Promotion End: '),
-                                    Text('Date Posting Promotion: ')
-                                  ],
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text('Promotion Name:'),
+                                      SizedBox(
+                                        height: 55,
+                                        child: Text('Promotion Detail:'),
+                                      ),
+                                      SizedBox(
+                                        height: 20,
+                                        child: Text('Link url:'),
+                                      ),
+                                      Text('Promotion Start:'),
+                                      Text('Promotion End: '),
+                                      Text('Date Posting Promotion: '),
+                                      Text('Notification:'),
+                                      Text('NotificationTime:'),
+                                    ],
+                                  ),
                                 ),
                                 Container(
                                   padding: EdgeInsets.only(left: 5),
@@ -281,11 +375,34 @@ class _CampaignDetailState extends State<CampaignDetail> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      // Text(CampaignDetail!.promo_name),
-                                      // SizedBox(
-                                      //   width: 200,
-                                      //   height: 55,
-                                      // )
+                                      Text(campaign_name.text),
+                                      SizedBox(
+                                        width: 150,
+                                        height: 55,
+                                        child: AutoSizeText(
+                                          campaign_detail.text,
+                                          minFontSize: 14,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(color: Colors.black),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 150,
+                                        height: 20,
+                                        child: AutoSizeText(
+                                          campaign_url.text,
+                                          minFontSize: 14,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(color: Colors.black),
+                                        ),
+                                      ),
+                                      Text(campaign_startdate.text),
+                                      Text(campaign_enddate.text),
+                                      Text(campaign_presentdate.text),
+                                      Text(campaign_notifications.text),
+                                      Text(campaign_notificationstime.text)
                                     ],
                                   ),
                                 )
@@ -393,6 +510,95 @@ class _CampaignDetailState extends State<CampaignDetail> {
     );
   }
 
+  void deleteCampaignDialog(BuildContext contex) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          content: SingleChildScrollView(
+            child: Column(
+              children: [
+                Column(
+                  children: [
+                    Text(
+                      'Are you sure to delete this campaign from app?',
+                      style: TextStyle(
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    Text('คุณแน่ใจใช่ไหมที่จะต้องการลบข้อมูลของแคมเปญอันนี้')
+                  ],
+                )
+              ],
+            ),
+          ),
+          actions: [
+            ElevatedButton(
+                onPressed: () async {
+                  String apiPath =
+                      '${MyConstant.domain_warecondb}warehouseconnect_data2/delete_campaignDB.php?id=${campaign_id.text}';
+                  await Dio().get(apiPath).then((value) {
+                    print("Before");
+                    print(value);
+                    print("Next step");
+                    if (value.toString() == 'delete_successfully') {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          duration: Duration(seconds: 2),
+                          content: GestureDetector(
+                              onTap: () => ScaffoldMessenger.of(context)
+                                  .hideCurrentSnackBar(),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Delete successfully'),
+                                  Icon(
+                                    Icons.close_rounded,
+                                    color: Colors.white,
+                                  )
+                                ],
+                              )),
+                          behavior: SnackBarBehavior.floating,
+                          margin: EdgeInsets.only(
+                              bottom: 40.0, left: 10, right: 10),
+                        ),
+                      );
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          duration: Duration(seconds: 2),
+                          content: GestureDetector(
+                              onTap: () => ScaffoldMessenger.of(context)
+                                  .hideCurrentSnackBar(),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Error!! Please try again'),
+                                  Icon(
+                                    Icons.close_rounded,
+                                    color: Colors.white,
+                                  )
+                                ],
+                              )),
+                          behavior: SnackBarBehavior.floating,
+                          margin: EdgeInsets.only(
+                              bottom: 40.0, left: 10, right: 10),
+                        ),
+                      );
+                    }
+                  });
+                },
+                child: Text('Confirm'))
+          ],
+        );
+      },
+    );
+  }
+
   void popEditform(BuildContext context, double screensize) {
     showDialog(
       context: context,
@@ -410,15 +616,20 @@ class _CampaignDetailState extends State<CampaignDetail> {
                   ),
                 ),
                 onPressed: () async {
+                  String update_id = campaign_id.text;
                   String update_promoname = campaign_name.text;
                   String update_promodetail = campaign_detail.text;
                   String update_url = campaign_url.text;
                   String update_startdate = campaign_startdate.text;
                   String update_enddate = campaign_enddate.text;
                   String update_presentdate = campaign_presentdate.text;
+                  String update_notifications = campaign_notifications.text;
+                  String update_notificationtime =
+                      campaign_notificationstime.text;
 
                   String apiPath =
-                      '${MyConstant.domain_warecondb}/warehouseconnect_data2/update_campaigninfo.php?promoname=$update_promoname&promadetail=$update_promodetail&url=$update_url&startdate=$update_startdate&enddate=$update_enddate&presentdate=$update_presentdate';
+                      '${MyConstant.domain_warecondb}/warehouseconnect_data2/update_campaigninfo.php?id=$update_id&promoname=$update_promoname&promadetail=$update_promodetail&url=$update_url&startdate=$update_startdate&enddate=$update_enddate&presentdate=$update_presentdate&notifications=$update_notifications&notificationstime=$update_notificationtime';
+                  print(apiPath);
                   await Dio().get(apiPath).then((value) {
                     print(value);
                     if (value.toString() == 'successfully') {
@@ -574,6 +785,25 @@ class _CampaignDetailState extends State<CampaignDetail> {
                       SizedBox(
                         height: 5,
                       ),
+                      Container(
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          'Notifications',
+                          style: TextStyle(fontSize: 11),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      editForm_select(),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      editFrom_campaignnotiweekly(),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      editForm_campaignnotificationtime(),
                     ],
                   ),
                 ),
@@ -582,6 +812,58 @@ class _CampaignDetailState extends State<CampaignDetail> {
           ),
         );
       },
+    );
+  }
+
+  Container editForm_select() {
+    return Container(
+      alignment: Alignment.center,
+      child: DropdownButtonFormField(
+        value: 'Weekly',
+        decoration: InputDecoration(
+          contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Color.fromARGB(255, 215, 214, 214)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Colors.red, width: 2),
+          ),
+          prefixIcon: Icon(
+            Icons.info_outline,
+            color: Colors.black,
+          ),
+        ),
+        items: SelectedChoice.map((value) => DropdownMenuItem(
+              value: value,
+              child: Container(
+                  alignment: Alignment.centerLeft, child: Text(value)),
+            )).toList(),
+        onChanged: (value) {
+          setState(() {
+            dropdownValue = value;
+            if (dropdownValue == 'Weekly') {
+              weekly = [
+                '',
+                'Monday',
+                'Tuesday',
+                'Wednesday',
+                'Thursday',
+                'Friday',
+                'Saturday',
+                'Sunday'
+              ];
+            } else {
+              weekly = monthly;
+            }
+            print(weekly);
+          });
+        },
+      ),
     );
   }
 
@@ -674,47 +956,49 @@ class _CampaignDetailState extends State<CampaignDetail> {
     );
   }
 
-  TextFormField editForm_startcampaign() {
-    return TextFormField(
-      controller: campaign_startdate == null ? null : campaign_startdate,
-      // initialValue: truckData_serial.text,
-      decoration: InputDecoration(
-        suffixIcon: Icon(Icons.calendar_today_rounded),
-        contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
-        errorStyle: TextStyle(color: Colors.red),
-        hintText: 'Promotion Start',
-        filled: true,
-        fillColor: Colors.white,
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: Color.fromARGB(255, 215, 214, 214)),
+  Container editForm_startcampaign() {
+    return Container(
+      child: TextFormField(
+        controller: campaign_startdate == null ? null : campaign_startdate,
+        // initialValue: truckData_serial.text,
+        decoration: InputDecoration(
+          suffixIcon: Icon(Icons.calendar_today_rounded),
+          contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
+          errorStyle: TextStyle(color: Colors.red),
+          hintText: 'Promotion Start',
+          filled: true,
+          fillColor: Colors.white,
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Color.fromARGB(255, 215, 214, 214)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Colors.red, width: 2),
+          ),
+          prefixIcon: Icon(
+            Icons.info_outline,
+            color: Colors.black,
+          ),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: Colors.red, width: 2),
-        ),
-        prefixIcon: Icon(
-          Icons.info_outline,
-          color: Colors.black,
-        ),
-      ),
-      onTap: () async {
-        DateTime? pickeddate = await showDatePicker(
-            context: context,
-            initialDate: DateTime.now(),
-            firstDate: DateTime(2000),
-            lastDate: DateTime(2101));
+        onTap: () async {
+          DateTime? pickeddate = await showDatePicker(
+              context: context,
+              initialDate: DateTime.now(),
+              firstDate: DateTime(2000),
+              lastDate: DateTime(2101));
 
-        if (pickeddate != null) {
-          setState(() {
-            campaign_startdate.text =
-                DateFormat('dd/MM/yyyy').format(pickeddate);
-          });
-        }
-      },
+          if (pickeddate != null) {
+            setState(() {
+              campaign_startdate.text =
+                  DateFormat('dd/MM/yyyy').format(pickeddate);
+            });
+          }
+        },
+      ),
     );
   }
 
@@ -787,6 +1071,147 @@ class _CampaignDetailState extends State<CampaignDetail> {
           color: Colors.black,
         ),
       ),
+      onTap: () async {
+        TimeOfDay? newTime = await showTimePicker(
+            context: context, initialTime: TimeOfDay.now());
+
+        if (newTime != null) {
+          setState(() {
+            String formattedTime = DateFormat('hh:mm a').format(
+              DateTime(
+                DateTime.now().year,
+                DateTime.now().month,
+                DateTime.now().day,
+                newTime.hour,
+                newTime.minute,
+              ),
+            );
+            campaign_presentdate.text = formattedTime;
+          });
+        }
+      },
+    );
+  }
+
+  DropdownButtonFormField<String> editFrom_campaignnotiweekly() {
+    return DropdownButtonFormField(
+      // value: campaign_notifications.text,
+      value: '',
+      decoration: InputDecoration(
+        contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Color.fromARGB(255, 215, 214, 214)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.red, width: 2),
+        ),
+        prefixIcon: Icon(
+          Icons.info_outline,
+          color: Colors.black,
+        ),
+      ),
+      items: weekly
+          .map((value) => DropdownMenuItem(
+                value: value,
+                child: Container(
+                    alignment: Alignment.centerLeft, child: Text(value)),
+              ))
+          .toList(),
+      onChanged: (value) {
+        setState(() {
+          campaign_notifications.text = value!;
+        });
+      },
+    );
+  }
+
+  DropdownButtonFormField editFrom_campaignnotimonthly() {
+    return DropdownButtonFormField(
+      value: '1',
+      decoration: InputDecoration(
+        contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Color.fromARGB(255, 215, 214, 214)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.red, width: 2),
+        ),
+        prefixIcon: Icon(
+          Icons.info_outline,
+          color: Colors.black,
+        ),
+      ),
+      items: monthly
+          .map((value) => DropdownMenuItem(
+                value: value,
+                child: Container(
+                    alignment: Alignment.centerLeft, child: Text(value)),
+              ))
+          .toList(),
+      onChanged: (value) {
+        setState(() {
+          campaign_notifications.text = value;
+        });
+      },
+    );
+  }
+
+  TextFormField editForm_campaignnotificationtime() {
+    return TextFormField(
+      controller: campaign_notificationstime == null
+          ? null
+          : campaign_notificationstime,
+      // initialValue: truckData_serial.text,
+      decoration: InputDecoration(
+        contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
+        errorStyle: TextStyle(color: Colors.red),
+        hintText: 'Hour : Minute AM/PM',
+        filled: true,
+        fillColor: Colors.white,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Color.fromARGB(255, 215, 214, 214)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.red, width: 2),
+        ),
+        prefixIcon: Icon(
+          Icons.info_outline,
+          color: Colors.black,
+        ),
+      ),
+      onTap: () async {
+        TimeOfDay? newTime = await showTimePicker(
+            context: context, initialTime: TimeOfDay.now());
+        if (newTime != null) {
+          setState(() {
+            String formattedTime = DateFormat('hh:mm a').format(
+              DateTime(
+                DateTime.now().year,
+                DateTime.now().month,
+                DateTime.now().day,
+                newTime.hour,
+                newTime.minute,
+              ),
+            );
+            campaign_notificationstime.text = formattedTime;
+          });
+        }
+      },
     );
   }
 
