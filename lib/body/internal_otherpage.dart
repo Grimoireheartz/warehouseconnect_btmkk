@@ -21,6 +21,51 @@ class _InternalOtherState extends State<InternalOther> {
             buildQRGenerator(screensize, context),
             buildAddTruckCatalog(screensize, context),
             buildMarketingManagement(screensize, context),
+            buildOrderCastForm(screensize, context),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Container buildOrderCastForm(double screensize, BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(top: 10),
+      height: 45,
+      width: screensize * 0.95,
+      constraints: BoxConstraints(maxWidth: 600),
+      child: ElevatedButton.icon(
+        icon: Icon(
+          Icons.shopping_cart_outlined,
+          color: Colors.black,
+        ),
+        style: ElevatedButton.styleFrom(
+          alignment: Alignment.centerLeft,
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+        onPressed: () {
+          Navigator.pushNamed(context, MyConstant.routeOrderpage);
+        },
+        label: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Order Cast Form',
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+            Text(
+              'รายการคำสั่งซื้อ',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 12,
+              ),
+            )
           ],
         ),
       ),
@@ -56,7 +101,6 @@ class _InternalOtherState extends State<InternalOther> {
               'Marketing Management',
               style: TextStyle(
                 color: Colors.black,
-                fontSize: 12,
               ),
             ),
             Text(

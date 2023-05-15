@@ -44,8 +44,7 @@ class MyConstant {
   static String routeCampainpage = '/campainhistory';
   static String routeCampainForm = '/campainform';
   static String routeCampaigDetail = '/campaigndetail';
-  // static String pic_campaign = 'assets/campign.png';
-
+  static String routeOrderpage = '/orderhistory';
   TextStyle h3style_bl() => TextStyle(
         fontSize: 14,
         color: Colors.black,

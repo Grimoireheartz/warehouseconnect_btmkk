@@ -3,6 +3,7 @@ import 'package:btm_warehouseconnect/state/add_truck_tosite.dart';
 import 'package:btm_warehouseconnect/state/authen.dart';
 import 'package:btm_warehouseconnect/state/customer_home.dart';
 import 'package:btm_warehouseconnect/state/internal_home.dart';
+import 'package:btm_warehouseconnect/state/orderpage.dart';
 import 'package:btm_warehouseconnect/state/parkingsite_qr_generater.dart';
 import 'package:btm_warehouseconnect/state/qr_generator.dart';
 import 'package:btm_warehouseconnect/state/qr_scanner.dart';
@@ -21,6 +22,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:io' show Platform;
 import 'package:btm_warehouseconnect/state/campaignform.dart';
 import 'package:btm_warehouseconnect/state/campaignpage.dart';
+import 'package:btm_warehouseconnect/state/orderpage.dart';
 
 // uploade string test
 
@@ -38,6 +40,7 @@ final Map<String, WidgetBuilder> map = {
   MyConstant.routeAddTruckCatalog: (BuildContext context) => AddTruckCatalog(),
   MyConstant.routeCampainpage: (BuildContext context) => Campaignpage(),
   MyConstant.routeCampainForm: (BuildContext context) => CampaignForm(),
+  MyConstant.routeOrderpage: (BuildContext context) => Orderpage(),
 };
 
 Future<Null> main() async {

@@ -362,7 +362,7 @@ class _CampaignDetailState extends State<CampaignDetail> {
                                       ),
                                       Text('Promotion Start:'),
                                       Text('Promotion End: '),
-                                      Text('Date Posting Promotion: '),
+                                      Text('Promotion Update: '),
                                       Text('Notification:'),
                                       Text('NotificationTime:'),
                                     ],
@@ -777,7 +777,7 @@ class _CampaignDetailState extends State<CampaignDetail> {
                       Container(
                         alignment: Alignment.topLeft,
                         child: Text(
-                          'Date Posting Promotion: ',
+                          'Update Promotion: ',
                           style: TextStyle(fontSize: 11),
                         ),
                       ),
